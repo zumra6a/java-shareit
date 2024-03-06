@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.validation.Marker;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -43,6 +46,7 @@ public class UserController {
     }
 
     @PostMapping
+    @Validated(Marker.OnCreate.class)
     public UserDto add(@Valid @RequestBody UserDto user) {
         log.info("Request to add user {}", user);
 
@@ -50,6 +54,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
+    @Validated(Marker.OnUpdate.class)
     public UserDto update(@PathVariable("userId") Long userId, @RequestBody UserDto user) {
         log.info("Request to update user {} with id {}", user, userId);
 

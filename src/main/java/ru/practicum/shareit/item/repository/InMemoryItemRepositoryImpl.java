@@ -19,7 +19,7 @@ public class InMemoryItemRepositoryImpl implements ItemRepository {
     private static Long id = 1L;
     private final Map<Long, List<Item>> items = new HashMap<>();
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public InMemoryItemRepositoryImpl(UserRepository userRepository) {
@@ -58,11 +58,13 @@ public class InMemoryItemRepositoryImpl implements ItemRepository {
     public Item update(Item updatedItem) {
         Item item = findOneByUserAndItemId(updatedItem.getOwner(), updatedItem.getId());
 
-        if (!Objects.isNull(updatedItem.getName())) {
+        String name = updatedItem.getName();
+        if (!Objects.isNull(name) && !name.isBlank()) {
             item.setName(updatedItem.getName());
         }
 
-        if (!Objects.isNull(updatedItem.getDescription())) {
+        String description = updatedItem.getDescription();
+        if (!Objects.isNull(description) && !description.isBlank()) {
             item.setDescription(updatedItem.getDescription());
         }
 
@@ -72,10 +74,6 @@ public class InMemoryItemRepositoryImpl implements ItemRepository {
 
         if (!Objects.isNull(updatedItem.getOwner())) {
             item.setOwner(updatedItem.getOwner());
-        }
-
-        if (!Objects.isNull(updatedItem.getRequestId())) {
-            item.setRequestId(updatedItem.getRequestId());
         }
 
         return item;

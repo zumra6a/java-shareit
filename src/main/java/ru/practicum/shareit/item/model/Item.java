@@ -12,7 +12,6 @@ public class Item {
     private String description;
     private Boolean available;
     private Long owner;
-    private Long requestId;
 
     public Boolean isAvailable() {
         return available;

@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,12 +19,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validation.Marker;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    ItemService itemService;
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+    private final ItemService itemService;
 
     @Autowired
     public ItemController(ItemService itemService) {
@@ -31,7 +35,10 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto add(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto item) {
+    @Validated(Marker.OnCreate.class)
+    public ItemDto add(
+            @RequestHeader(HEADER_USER_ID) Long userId,
+            @Valid @RequestBody ItemDto item) {
         log.info("Request to add user {} item {}", userId, item);
 
         item.setOwner(userId);
@@ -40,9 +47,10 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
+    @Validated(Marker.OnUpdate.class)
     public ItemDto update(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @RequestBody ItemDto item,
+            @RequestHeader(HEADER_USER_ID) Long userId,
+            @Valid @RequestBody ItemDto item,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to update user {} item {} with id {}", userId, item, itemId);
 
@@ -54,7 +62,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto findOneById(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HEADER_USER_ID) Long userId,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to load user {} item with id {}", userId, itemId);
 
@@ -62,7 +70,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> findAllByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> findAllByUserId(@RequestHeader(HEADER_USER_ID) Long userId) {
         log.info("Request to load user {} items", userId);
 
         return itemService.findAllByUserId(userId);

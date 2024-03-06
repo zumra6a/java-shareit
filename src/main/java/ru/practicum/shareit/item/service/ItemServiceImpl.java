@@ -11,7 +11,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository) {

@@ -5,7 +5,6 @@ import java.util.List;
 import ru.practicum.shareit.user.dto.UserDto;
 
 public interface UserService {
-
     List<UserDto> findAll();
 
     UserDto findOneById(long userId);

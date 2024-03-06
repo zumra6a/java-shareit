@@ -44,24 +44,25 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User update(User user) {
-        long userId = user.getId();
+    public User update(User updatedUser) {
+        long userId = updatedUser.getId();
 
         validateUserById(userId);
 
-        User oldUser = users.get(userId);
-        if (Objects.isNull(user.getEmail())) {
-            user.setEmail(oldUser.getEmail());
+        User user = users.get(userId);
+
+        String email = updatedUser.getEmail();
+        if (!Objects.isNull(email) && !email.isBlank()) {
+            updateEmail(user.getEmail(), email);
+            user.setEmail(email);
         }
 
-        if (Objects.isNull(user.getName())) {
-            user.setName(oldUser.getName());
+        String name = updatedUser.getName();
+        if (!Objects.isNull(name) && !name.isBlank()) {
+            user.setName(name);
         }
 
-        updateEmail(oldUser.getEmail(), user.getEmail());
-        users.put(userId, user);
-
-        return users.get(userId);
+        return user;
     }
 
     @Override
@@ -72,7 +73,6 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     private void validateUserById(Long userId) {
-        System.out.println("users = " + users);
         if (!users.containsKey(userId)) {
             throw new NoSuchElementException(String.format("User with id %d not found", id));
         }

@@ -5,22 +5,21 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.validation.Marker;
 
 @Builder
 @Data
 public class ItemDto {
     private Long id;
 
-    @NotBlank
+    @NotBlank(groups = {Marker.OnCreate.class})
     private String name;
 
-    @NotBlank
+    @NotBlank(groups = {Marker.OnCreate.class})
     private String description;
 
-    @NotNull
+    @NotNull(groups = {Marker.OnCreate.class})
     private Boolean available;
 
     private Long owner;
-
-    private Long requestId;
 }

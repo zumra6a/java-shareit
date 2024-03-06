@@ -49,7 +49,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleException(final RuntimeException e) {
+    public Map<String, String> handleException(final Throwable e) {
         log.error("Runtime error");
 
         return Map.of(
