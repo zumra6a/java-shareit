@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,30 +23,24 @@ import ru.practicum.shareit.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "items", schema = "public")
-public class Item {
+@Table(name = "comments", schema = "public")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Column(name = "description", nullable = false)
-    private String description;
-
-    @Column(name = "available", nullable = false)
-    private Boolean available;
+    @Column(name = "text")
+    private String text;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
-    public Boolean isAvailable() {
-        return available;
-    }
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
 
-    public boolean isOwnedBy(Long userId) {
-        return owner.getId().equals(userId);
-    }
+    @Column(name = "created")
+    private LocalDateTime created;
 }

@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
@@ -36,50 +39,58 @@ public class ItemController {
 
     @PostMapping
     @Validated(Marker.OnCreate.class)
-    public ItemDto add(
+    public ItemResponseDto add(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody ItemDto item) {
-        log.info("Request to add user {} item {}", userId, item);
+            @Valid @RequestBody ItemDto itemDto) {
+        log.info("Request to add user {} item {}", userId, itemDto);
 
-        item.setOwner(userId);
-
-        return itemService.add(item);
+        return itemService.add(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     @Validated(Marker.OnUpdate.class)
-    public ItemDto update(
+    public ItemResponseDto update(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody ItemDto item,
+            @Valid @RequestBody ItemDto itemDto,
             @PathVariable("itemId") Long itemId) {
-        log.info("Request to update user {} item {} with id {}", userId, item, itemId);
+        log.info("Request to update user {} item {} with id {}", userId, itemDto, itemId);
 
-        item.setOwner(userId);
-        item.setId(itemId);
-
-        return itemService.update(item);
+        return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto findOneById(
+    public ItemResponseDto findOneById(
             @RequestHeader(HEADER_USER_ID) Long userId,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to load user {} item with id {}", userId, itemId);
 
-        return itemService.findOneById(itemId);
+        return itemService.findOneById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> findAllByUserId(@RequestHeader(HEADER_USER_ID) Long userId) {
+    public List<ItemResponseDto> findAllByUserId(@RequestHeader(HEADER_USER_ID) Long userId) {
         log.info("Request to load user {} items", userId);
 
         return itemService.findAllByUserId(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam(name = "text") String text) {
+    public List<ItemResponseDto> search(
+            @RequestHeader(HEADER_USER_ID) Long userId,
+            @RequestParam(name = "text") String text) {
         log.info("Request to search items with text {}", text);
 
-        return itemService.search(text);
+        return itemService.search(userId, text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @Validated(Marker.OnCreate.class)
+    public CommentResponseDto addComment(
+            @RequestHeader(HEADER_USER_ID) Long userId,
+            @Valid @RequestBody CommentDto commentDto,
+            @PathVariable("itemId") Long itemId) {
+        log.info("Request to add user {} comment {} to item with id {}", userId, commentDto, itemId);
+
+        return itemService.addComment(userId, commentDto, itemId);
     }
 }

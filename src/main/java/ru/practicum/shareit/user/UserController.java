@@ -55,12 +55,10 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     @Validated(Marker.OnUpdate.class)
-    public UserDto update(@PathVariable("userId") Long userId, @RequestBody UserDto user) {
+    public UserDto update(@PathVariable("userId") Long userId, @Valid @RequestBody UserDto user) {
         log.info("Request to update user {} with id {}", user, userId);
 
-        user.setId(userId);
-
-        return userService.update(user);
+        return userService.update(userId, user);
     }
 
     @DeleteMapping("/{userId}")
