@@ -2,8 +2,6 @@ package ru.practicum.shareit.item;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,20 +36,18 @@ public class ItemController {
     }
 
     @PostMapping
-    @Validated(Marker.OnCreate.class)
     public ItemResponseDto add(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody ItemDto itemDto) {
+            @Validated(Marker.OnCreate.class) @RequestBody ItemDto itemDto) {
         log.info("Request to add user {} item {}", userId, itemDto);
 
         return itemService.add(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    @Validated(Marker.OnUpdate.class)
     public ItemResponseDto update(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody ItemDto itemDto,
+            @Validated(Marker.OnUpdate.class) @RequestBody ItemDto itemDto,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to update user {} item {} with id {}", userId, itemDto, itemId);
 
@@ -84,10 +80,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    @Validated(Marker.OnCreate.class)
     public CommentResponseDto addComment(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody CommentDto commentDto,
+            @Validated(Marker.OnCreate.class) @RequestBody CommentDto commentDto,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to add user {} comment {} to item with id {}", userId, commentDto, itemId);
 

@@ -2,8 +2,6 @@ package ru.practicum.shareit.user;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,16 +44,16 @@ public class UserController {
     }
 
     @PostMapping
-    @Validated(Marker.OnCreate.class)
-    public UserDto add(@Valid @RequestBody UserDto user) {
+    public UserDto add(@Validated(Marker.OnCreate.class) @RequestBody UserDto user) {
         log.info("Request to add user {}", user);
 
         return userService.add(user);
     }
 
     @PatchMapping("/{userId}")
-    @Validated(Marker.OnUpdate.class)
-    public UserDto update(@PathVariable("userId") Long userId, @Valid @RequestBody UserDto user) {
+    public UserDto update(
+            @PathVariable("userId") Long userId,
+            @Validated(Marker.OnUpdate.class) @RequestBody UserDto user) {
         log.info("Request to update user {} with id {}", user, userId);
 
         return userService.update(userId, user);
