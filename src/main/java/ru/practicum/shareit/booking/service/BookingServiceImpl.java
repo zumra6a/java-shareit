@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -133,33 +134,38 @@ public class BookingServiceImpl implements BookingService {
 
         switch (bookingState) {
             case ALL:
-                bookings.addAll(bookingRepository.findAllByBookerIdOrderByStartDesc(userId));
+                bookings.addAll(bookingRepository.findAllByBookerId(userId, Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case CURRENT:
-                bookings.addAll(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(
                         userId,
                         LocalDateTime.now(),
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case PAST:
-                bookings.addAll(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByBookerIdAndEndBefore(
                         userId,
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case FUTURE:
-                bookings.addAll(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByBookerIdAndStartAfter(
                         userId,
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case WAITING:
-                bookings.addAll(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByBookerIdAndStatus(
                         userId,
-                        BookingStatus.WAITING));
+                        BookingStatus.WAITING,
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case REJECTED:
-                bookings.addAll(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByBookerIdAndStatus(
                         userId,
-                        BookingStatus.REJECTED));
+                        BookingStatus.REJECTED,
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
         }
 
@@ -179,33 +185,38 @@ public class BookingServiceImpl implements BookingService {
 
         switch (bookingState) {
             case ALL:
-                bookings.addAll(bookingRepository.findAllByItemOwnerOrderByStartDesc(user));
+                bookings.addAll(bookingRepository.findAllByItemOwner(user, Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case CURRENT:
-                bookings.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(
                         user,
                         LocalDateTime.now(),
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case PAST:
-                bookings.addAll(bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByItemOwnerAndEndBefore(
                         user,
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case FUTURE:
-                bookings.addAll(bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByItemOwnerAndStartAfter(
                         user,
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case WAITING:
-                bookings.addAll(bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByItemOwnerAndStatus(
                         user,
-                        BookingStatus.WAITING));
+                        BookingStatus.WAITING,
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
             case REJECTED:
-                bookings.addAll(bookingRepository.findAllByItemOwnerAndStatusOrderByStartDesc(
+                bookings.addAll(bookingRepository.findAllByItemOwnerAndStatus(
                         user,
-                        BookingStatus.REJECTED));
+                        BookingStatus.REJECTED,
+                        Sort.by(Sort.Direction.DESC, "start")));
                 break;
         }
 

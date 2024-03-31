@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -101,11 +102,12 @@ public class ItemServiceImpl implements ItemService {
 
         if (item.isOwnedBy(userId)) {
             Booking last = bookingRepository
-                    .findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
+                    .findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatus(
                             item.getId(),
                             userId,
                             LocalDateTime.now(),
-                            BookingStatus.APPROVED);
+                            BookingStatus.APPROVED,
+                            Sort.by(Sort.Direction.DESC, "start"));
 
             if (last != null) {
                 itemResponseDtoBuilder.lastBooking(ItemBookingResponseDto.builder()
@@ -115,11 +117,12 @@ public class ItemServiceImpl implements ItemService {
             }
 
             Booking next = bookingRepository
-                    .findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(
+                    .findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatus(
                             item.getId(),
                             userId,
                             LocalDateTime.now(),
-                            BookingStatus.APPROVED);
+                            BookingStatus.APPROVED,
+                            Sort.by(Sort.Direction.ASC, "start"));
 
             if (next != null) {
                 itemResponseDtoBuilder.nextBooking(ItemBookingResponseDto.builder()
