@@ -152,8 +152,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemRepository.findAllByNameContainsIgnoreCaseOrDescriptionContainsIgnoreCase(text, text).stream()
-                .filter(item -> item.isAvailable())
+        return itemRepository.searchAvailableItemsByNameAndDescription(text).stream()
                 .map(MapperItem::toItemResponseDto)
                 .collect(Collectors.toUnmodifiableList());
     }
