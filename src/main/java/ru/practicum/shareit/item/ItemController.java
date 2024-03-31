@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.headers.WithUserHeaderID;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -26,8 +27,7 @@ import ru.practicum.shareit.validation.Marker;
 @Validated
 @RestController
 @RequestMapping("/items")
-public class ItemController {
-    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+public class ItemController implements WithUserHeaderID {
     private final ItemService itemService;
 
     @Autowired

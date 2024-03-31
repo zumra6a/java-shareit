@@ -19,14 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.headers.WithUserHeaderID;
 
 @Slf4j
 @RestController
 @Validated
 @RequestMapping(path = "/bookings")
-public class BookingController {
-    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
-
+public class BookingController  implements WithUserHeaderID {
     private final BookingService bookingService;
 
     @Autowired
