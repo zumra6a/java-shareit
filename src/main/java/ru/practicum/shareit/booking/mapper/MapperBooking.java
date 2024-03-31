@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.mapper.MapperUser;
 
 @UtilityClass
 public class MapperBooking {
-    public static BookingResponseDto toBookingResponseDto(Booking booking) {
+    public BookingResponseDto toBookingResponseDto(Booking booking) {
         return BookingResponseDto.builder()
                 .id(booking.getId())
                 .item(MapperItem.toItemResponseDto(booking.getItem()))
