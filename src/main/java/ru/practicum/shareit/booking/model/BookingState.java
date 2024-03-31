@@ -11,10 +11,11 @@ public enum BookingState {
     FUTURE;
 
     public static Optional<BookingState> toEnum(String state) {
-        try {
-            return Optional.of(BookingState.valueOf(state));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
+        for (BookingState bookingState : BookingState.values()) {
+            if (bookingState.toString().equals(state)) {
+                return Optional.of(BookingState.valueOf(state));
+            }
         }
+        return Optional.empty();
     }
 }
