@@ -12,7 +12,7 @@ public enum BookingState {
 
     public static Optional<BookingState> toEnum(String state) {
         for (BookingState bookingState : BookingState.values()) {
-            if (bookingState.toString().equals(state)) {
+            if (bookingState.toString().equalsIgnoreCase(state)) {
                 return Optional.of(BookingState.valueOf(state));
             }
         }
