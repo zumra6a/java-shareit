@@ -12,6 +12,7 @@ public class MapperComment {
                 .text(comment.getText())
                 .authorName(comment.getAuthor().getName())
                 .created(comment.getCreated())
+                .itemId(comment.getItem().getId())
                 .build();
     }
 }

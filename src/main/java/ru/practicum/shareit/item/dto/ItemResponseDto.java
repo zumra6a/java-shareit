@@ -4,7 +4,6 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 @Builder(toBuilder = true)
 @Data
@@ -21,6 +20,5 @@ public class ItemResponseDto {
 
     private ItemBookingResponseDto nextBooking;
 
-    @Singular
     private List<CommentResponseDto> comments;
 }

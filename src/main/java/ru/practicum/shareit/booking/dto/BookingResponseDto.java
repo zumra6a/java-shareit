@@ -22,4 +22,8 @@ public class BookingResponseDto {
     private LocalDateTime end;
 
     private BookingStatus status;
+
+    public Long getItemId() {
+        return item.getId();
+    }
 }

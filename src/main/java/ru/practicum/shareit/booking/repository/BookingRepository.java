@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -57,4 +58,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             Long itemId,
             Long bookerId,
             LocalDateTime end);
+
+    List<Booking> findAllByItemInAndStatus(List<Item> items, BookingStatus status, Sort sort);
 }
