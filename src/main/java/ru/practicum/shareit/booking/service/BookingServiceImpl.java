@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (item.isOwnedBy(userId)) {
-            throw new NoSuchElementException(String.format("User %d does not own item %d", userId, itemId));
+            throw new NoSuchElementException(String.format("User %d can not book own item %d", userId, itemId));
         }
 
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
@@ -75,9 +77,7 @@ public class BookingServiceImpl implements BookingService {
                 .status(BookingStatus.WAITING)
                 .build();
 
-        bookingRepository.save(booking);
-
-        return MapperBooking.toBookingResponseDto(booking);
+        return MapperBooking.toBookingResponseDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -105,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponseDto findByUserIdAndItemId(Long userId, Long bookingId) {
+    public BookingResponseDto findByUserIdAndBookingId(Long userId, Long bookingId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User %d not found", userId)));
         Booking booking = bookingRepository.findById(bookingId)
@@ -124,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> findAllByUserIdAndItemId(Long userId, String state) {
+    public List<BookingResponseDto> findAllByBookerId(Long userId, String state, Integer from, Integer size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User %d not found", userId)));
         BookingState bookingState = BookingState.toEnum(state)
@@ -132,40 +132,42 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookings = new ArrayList<>();
 
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
+
         switch (bookingState) {
             case ALL:
-                bookings.addAll(bookingRepository.findAllByBookerId(userId, Sort.by(Sort.Direction.DESC, "start")));
+                bookings.addAll(bookingRepository.findAllByBookerId(userId, pageable));
                 break;
             case CURRENT:
                 bookings.addAll(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(
                         userId,
                         LocalDateTime.now(),
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case PAST:
                 bookings.addAll(bookingRepository.findAllByBookerIdAndEndBefore(
                         userId,
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case FUTURE:
                 bookings.addAll(bookingRepository.findAllByBookerIdAndStartAfter(
                         userId,
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case WAITING:
                 bookings.addAll(bookingRepository.findAllByBookerIdAndStatus(
                         userId,
                         BookingStatus.WAITING,
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case REJECTED:
                 bookings.addAll(bookingRepository.findAllByBookerIdAndStatus(
                         userId,
                         BookingStatus.REJECTED,
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
         }
 
@@ -175,7 +177,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> getBookingListByItemOwner(Long userId, String state) {
+    public List<BookingResponseDto> findAllByOwnerId(Long userId, String state, Integer from, Integer size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User %d not found", userId)));
         BookingState bookingState = BookingState.toEnum(state)
@@ -183,40 +185,42 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookings = new ArrayList<>();
 
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
+
         switch (bookingState) {
             case ALL:
-                bookings.addAll(bookingRepository.findAllByItemOwner(user, Sort.by(Sort.Direction.DESC, "start")));
+                bookings.addAll(bookingRepository.findAllByItemOwner(user, pageable));
                 break;
             case CURRENT:
                 bookings.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(
                         user,
                         LocalDateTime.now(),
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case PAST:
                 bookings.addAll(bookingRepository.findAllByItemOwnerAndEndBefore(
                         user,
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case FUTURE:
                 bookings.addAll(bookingRepository.findAllByItemOwnerAndStartAfter(
                         user,
                         LocalDateTime.now(),
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case WAITING:
                 bookings.addAll(bookingRepository.findAllByItemOwnerAndStatus(
                         user,
                         BookingStatus.WAITING,
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
             case REJECTED:
                 bookings.addAll(bookingRepository.findAllByItemOwnerAndStatus(
                         user,
                         BookingStatus.REJECTED,
-                        Sort.by(Sort.Direction.DESC, "start")));
+                        pageable));
                 break;
         }
 

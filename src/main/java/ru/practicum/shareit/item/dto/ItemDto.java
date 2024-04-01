@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.validation.Marker;
 
-@Builder
+@Builder(toBuilder = true)
 @Data
 public class ItemDto {
     private Long id;
@@ -25,4 +25,6 @@ public class ItemDto {
     private Boolean available;
 
     private Long owner;
+
+    private Long requestId;
 }

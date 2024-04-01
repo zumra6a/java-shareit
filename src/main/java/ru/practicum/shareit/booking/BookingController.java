@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,29 +54,33 @@ public class BookingController  implements WithUserHeaderID {
     }
 
     @GetMapping("{bookingId}")
-    public BookingResponseDto findByUserIdAndItemId(
+    public BookingResponseDto findByUserIdAndBookingId(
             @RequestHeader(HEADER_USER_ID) Long userId,
             @PathVariable("bookingId") Long bookingId) {
         log.info("Request to load user {} booking with id {}", userId, bookingId);
 
-        return bookingService.findByUserIdAndItemId(userId, bookingId);
+        return bookingService.findByUserIdAndBookingId(userId, bookingId);
     }
 
     @GetMapping
-    public List<BookingResponseDto> findAllByUserIdAndItemId(
+    public List<BookingResponseDto> findAllByBookerId(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @RequestParam(defaultValue = "ALL") String state) {
+            @RequestParam(defaultValue = "ALL") String state,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Request to load user {} bookings in state {}", userId, state);
 
-        return bookingService.findAllByUserIdAndItemId(userId, state);
+        return bookingService.findAllByBookerId(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingResponseDto> getBookingListByItemOwner(
+    public List<BookingResponseDto> findAllByOwnerId(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @RequestParam(defaultValue = "ALL") String state) {
+            @RequestParam(defaultValue = "ALL") String state,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Request to load user {} bookings items in state {}", userId, state);
 
-        return bookingService.getBookingListByItemOwner(userId, state);
+        return bookingService.findAllByOwnerId(userId, state, from, size);
     }
 }

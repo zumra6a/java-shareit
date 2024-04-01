@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -41,17 +44,19 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Autowired
     public ItemServiceImpl(
             ItemRepository itemRepository,
             UserRepository userRepository,
             CommentRepository commentRepository,
-            BookingRepository bookingRepository) {
+            BookingRepository bookingRepository, ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Override
@@ -62,6 +67,11 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = MapperItem.toItem(itemDto);
         item.setOwner(user);
+
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
+        }
+
         item = itemRepository.save(item);
 
         return MapperItem.toItemResponseDto(item);
@@ -148,11 +158,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> findAllByUserId(Long userId) {
+    public List<ItemResponseDto> findAllByUserId(Long userId, Integer from, Integer size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User %d not found", userId)));
 
-        List<Item> userItems = itemRepository.findAllByOwnerId(userId);
+        Pageable pageable = PageRequest.of(from / size, size);
+
+        List<Item> userItems = itemRepository.findAllByOwnerId(userId, pageable);
 
         List<Long> userItemIdList = userItems.stream()
                 .map(Item::getId)
@@ -165,7 +177,8 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, List<BookingResponseDto>> bookings = bookingRepository.findAllByItemInAndStatus(
                         userItems,
                         BookingStatus.APPROVED,
-                        Sort.by(Sort.Direction.ASC, "start")).stream()
+                        PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "start")))
+                .stream()
                 .map(MapperBooking::toBookingResponseDto)
                 .collect(groupingBy(BookingResponseDto::getItemId, toList()));
 
@@ -202,7 +215,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> search(Long userId, String text) {
+    public List<ItemResponseDto> search(Long userId, String text, Integer from, Integer size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User %d not found", userId)));
 
@@ -210,7 +223,9 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemRepository.searchAvailableItemsByNameAndDescription(text).stream()
+        Pageable pageable = PageRequest.of(from / size, size);
+
+        return itemRepository.searchAvailableItemsByNameAndDescription(text, pageable).stream()
                 .map(MapperItem::toItemResponseDto)
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -237,9 +252,7 @@ public class ItemServiceImpl implements ItemService {
                 .created(LocalDateTime.now())
                 .build();
 
-        commentRepository.save(comment);
-
-        return MapperComment.toCommentResponseDto(comment);
+        return MapperComment.toCommentResponseDto(commentRepository.save(comment));
     }
 
     private BookingResponseDto filterLastBooking(List<BookingResponseDto> bookings, LocalDateTime time) {

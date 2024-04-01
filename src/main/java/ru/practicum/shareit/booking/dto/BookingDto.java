@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-@Builder
+@Builder(toBuilder = true)
 @Data
 public class BookingDto {
     @NotNull

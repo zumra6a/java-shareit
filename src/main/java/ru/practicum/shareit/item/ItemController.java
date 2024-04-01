@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import java.util.List;
 
+import javax.validation.constraints.Min;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,19 +66,24 @@ public class ItemController implements WithUserHeaderID {
     }
 
     @GetMapping
-    public List<ItemResponseDto> findAllByUserId(@RequestHeader(HEADER_USER_ID) Long userId) {
+    public List<ItemResponseDto> findAllByUserId(
+            @RequestHeader(HEADER_USER_ID) Long userId,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Request to load user {} items", userId);
 
-        return itemService.findAllByUserId(userId);
+        return itemService.findAllByUserId(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemResponseDto> search(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @RequestParam(name = "text") String text) {
+            @RequestParam(name = "text") String text,
+            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         log.info("Request to search items with text {}", text);
 
-        return itemService.search(userId, text);
+        return itemService.search(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

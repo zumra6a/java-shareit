@@ -13,7 +13,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 @Data
@@ -39,6 +42,12 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private ItemRequest request;
 
     public Boolean isAvailable() {
         return available;
