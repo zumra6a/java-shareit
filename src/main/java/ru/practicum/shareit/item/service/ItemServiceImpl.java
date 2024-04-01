@@ -178,8 +178,9 @@ public class ItemServiceImpl implements ItemService {
                     itemResponseDtoBuilder.comments(comments.get(item.getId()));
 
                     List<BookingResponseDto> itemBookings = bookings.get(item.getId());
-                    BookingResponseDto last = filterLastBooking(itemBookings, LocalDateTime.now());
-                    BookingResponseDto next = filterNextBooking(itemBookings, LocalDateTime.now());
+                    LocalDateTime filterDate = LocalDateTime.now();
+                    BookingResponseDto last = filterLastBooking(itemBookings, filterDate);
+                    BookingResponseDto next = filterNextBooking(itemBookings, filterDate);
 
                     if (last != null) {
                         itemResponseDtoBuilder.lastBooking(ItemBookingResponseDto.builder()
@@ -248,7 +249,11 @@ public class ItemServiceImpl implements ItemService {
 
         return bookings
                 .stream()
-                .filter(booking -> booking.getStart().isBefore(time))
+                .filter(booking -> {
+                    LocalDateTime start = booking.getStart();
+
+                    return  start.isBefore(time) || start.equals(time);
+                })
                 .findFirst()
                 .orElse(null);
     }
