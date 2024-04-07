@@ -12,9 +12,9 @@ public interface ItemService {
 
     ItemResponseDto update(Long userId, Long itemId, ItemDto itemDto);
 
-    List<ItemResponseDto> findAllByUserId(Long userId);
+    List<ItemResponseDto> findAllByUserId(Long userId, Integer from, Integer size);
 
-    List<ItemResponseDto> search(Long userId, String text);
+    List<ItemResponseDto> search(Long userId, String text, Integer from, Integer size);
 
     ItemResponseDto findOneById(Long userId, Long itemId);
 
