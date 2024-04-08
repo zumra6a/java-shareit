@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler({MethodArgumentNotValidException.class, IllegalStateException.class})
+    @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationError(final Exception e) {
         log.error("Object validation error");
@@ -24,7 +23,7 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler({NoSuchElementException.class})
+    @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNoSuchElementException(final NoSuchElementException e) {
         log.error("Object not found error");
@@ -35,7 +34,7 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler({NotUniqueElementException.class})
+    @ExceptionHandler(NotUniqueElementException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleNotUniqueElementException(final NotUniqueElementException e) {
         log.error("Object is not unique error");
