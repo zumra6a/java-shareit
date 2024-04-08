@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import javax.validation.ValidationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -94,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (!booking.getStatus().equals(BookingStatus.WAITING)) {
-            throw new ValidationException("Booking is not in available status");
+            throw new IllegalStateException("Booking is not in available status");
         }
 
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);

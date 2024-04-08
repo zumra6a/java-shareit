@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import javax.validation.ValidationException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -175,7 +173,7 @@ class BookingServiceImplTest {
         when(bookingRepository.findById(bookingApproved.getId()))
                 .thenReturn(Optional.of(bookingApproved));
 
-        ValidationException exception = assertThrows(ValidationException.class,
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
                 () -> bookingService.update(user.getId(), booking.getId(), false));
 
         assertEquals(exception.getMessage(), "Booking is not in available status");

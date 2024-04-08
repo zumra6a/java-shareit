@@ -2,11 +2,8 @@ package ru.practicum.shareit.request;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +18,6 @@ import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
 @Slf4j
-@Validated
 @RestController
 @RequestMapping(path = "/requests")
 public class ItemRequestController implements WithUserHeaderID {
@@ -35,7 +31,7 @@ public class ItemRequestController implements WithUserHeaderID {
     @PostMapping
     public ItemRequestResponseDto add(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody ItemRequestDto itemRequestDto) {
+            @RequestBody ItemRequestDto itemRequestDto) {
         return requestService.add(userId, itemRequestDto);
     }
 

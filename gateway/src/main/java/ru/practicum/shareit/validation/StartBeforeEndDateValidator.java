@@ -23,6 +23,6 @@ public class StartBeforeEndDateValidator implements ConstraintValidator<StartBef
             return false;
         }
 
-        return start.isBefore(end);
+        return start.isBefore(end) || start.isEqual(end);
     }
 }

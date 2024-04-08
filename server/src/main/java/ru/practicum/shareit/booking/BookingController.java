@@ -2,11 +2,8 @@ package ru.practicum.shareit.booking;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +20,6 @@ import ru.practicum.shareit.headers.WithUserHeaderID;
 
 @Slf4j
 @RestController
-@Validated
 @RequestMapping(path = "/bookings")
 public class BookingController  implements WithUserHeaderID {
     private final BookingService bookingService;
@@ -36,7 +32,7 @@ public class BookingController  implements WithUserHeaderID {
     @PostMapping
     public BookingResponseDto add(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Valid @RequestBody BookingDto bookingDto) {
+            @RequestBody BookingDto bookingDto) {
         log.info("Request to add user {} booking {}", userId, bookingDto);
 
         return bookingService.add(userId, bookingDto);

@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +20,8 @@ import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.validation.Marker;
 
 @Slf4j
-@Validated
 @RestController
 @RequestMapping("/items")
 public class ItemController implements WithUserHeaderID {
@@ -38,7 +35,7 @@ public class ItemController implements WithUserHeaderID {
     @PostMapping
     public ItemResponseDto add(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Validated(Marker.OnCreate.class) @RequestBody ItemDto itemDto) {
+            @RequestBody ItemDto itemDto) {
         log.info("Request to add user {} item {}", userId, itemDto);
 
         return itemService.add(userId, itemDto);
@@ -47,7 +44,7 @@ public class ItemController implements WithUserHeaderID {
     @PatchMapping("/{itemId}")
     public ItemResponseDto update(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Validated(Marker.OnUpdate.class) @RequestBody ItemDto itemDto,
+            @RequestBody ItemDto itemDto,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to update user {} item {} with id {}", userId, itemDto, itemId);
 
@@ -87,7 +84,7 @@ public class ItemController implements WithUserHeaderID {
     @PostMapping("/{itemId}/comment")
     public CommentResponseDto addComment(
             @RequestHeader(HEADER_USER_ID) Long userId,
-            @Validated(Marker.OnCreate.class) @RequestBody CommentDto commentDto,
+            @RequestBody CommentDto commentDto,
             @PathVariable("itemId") Long itemId) {
         log.info("Request to add user {} comment {} to item with id {}", userId, commentDto, itemId);
 

@@ -3,8 +3,6 @@ package ru.practicum.shareit.exceptions;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.validation.ValidationException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class, IllegalStateException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, IllegalStateException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationError(final Exception e) {
         log.error("Object validation error");
